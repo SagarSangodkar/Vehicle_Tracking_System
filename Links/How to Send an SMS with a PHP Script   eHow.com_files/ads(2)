@@ -1,0 +1,29 @@
+{
+
+var google_ads = new Array();
+var google_ad;
+var google_radlinks = new Array();
+var google_radlink;
+var google_info = new Object();
+google_ad = {}; 
+google_ad.n = 1; 
+google_ad.type = "text"; 
+google_ad.bidtype = "CPC"; 
+google_ad.targeting_type = "contextual"; 
+google_ad.url = "http://www.googleadservices.com/pagead/aclk?sa=L&amp;ai=CQduRD9dEUfaBE8W6igfJ_oHAD4zK6vkC3KSvwj7AjbcBEAEgqYmtBlCV2_a7B2DlgoCA1CegAfyapt0DyAEBqAMBqgR8T9AFF6k92XBwY_YzD5Yuup6QfRL8SaIknp0_dOVDW5-bZcAh2pzJ9tIVlO_Pg6VbefYoGNF-EjsN589su-6M-zy0ArAHjKecJO5NvOSfSxfh1IuU0hGfG8J3OV50ywe3kbYiZ832PYMkhdENEWiX9nnMdKzZ-2HrsbOTK4gGAYAH7OTZIg&amp;num=1&amp;cid=5Gg_wLRhVH_ZrbdQISTdfdQ5&amp;sig=AOD64_3nRdHrGIN5u-A6n6AVlzZ-b3d5Xw&amp;client=ca-ehow_300x250&amp;adurl=http://www.beachheadmobile.com"; 
+google_ad.visible_url = "www.beachheadmobile.com"; 
+google_ad.line1 = "AllSafe--Password Vault"; 
+google_ad.line2 = "More than a password manager"; 
+google_ad.line3 = "it\x26#39;s mobile peace of mind."; 
+google_ad.regionname = ""; 
+google_ads[0] = google_ad; 
+google_info.feedback_url = "http://www.google.com/url?ct\x3dabg\x26q\x3dhttps://www.google.com/adsense/support/bin/request.py%3Fcontact%3Dabg_afc%26url%3Dhttp://www.ehow.com/how_7326118_send-sms-php-script.html%26gl%3DIN%26hl%3Den%26client%3Dca-ehow_300x250%26hideleadgen%3D1%26ai0%3DCQduRD9dEUfaBE8W6igfJ_oHAD4zK6vkC3KSvwj7AjbcBEAEgqYmtBlCV2_a7B2DlgoCA1CegAfyapt0DyAEBqAMBqgR8T9AFF6k92XBwY_YzD5Yuup6QfRL8SaIknp0_dOVDW5-bZcAh2pzJ9tIVlO_Pg6VbefYoGNF-EjsN589su-6M-zy0ArAHjKecJO5NvOSfSxfh1IuU0hGfG8J3OV50ywe3kbYiZ832PYMkhdENEWiX9nnMdKzZ-2HrsbOTK4gGAYAH7OTZIg\x26usg\x3dAFQjCNFUkHZuUsWS6ekoWQo9e97hts4vng";
+var google_attribution_text = "AdChoices";
+var google_is_rtl = false;
+if (window.google_ad_request_done) {
+google_ad_request_done(google_ads);
+}
+if (window.google_radlink_request_done) {
+google_radlink_request_done(google_radlinks);
+}
+}

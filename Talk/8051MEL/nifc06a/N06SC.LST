@@ -1,0 +1,98 @@
+g  6 2004 10:49                                                                                                  Page    1
+
+
+
+
+
+
+
+                 8051 Macro Assembler                  
+       ------------------------------------------------
+
+               Input  Filename : N06SC.asm
+               Output Filename : N06SC.obj
+
+
+                       	;NIFC-06
+                       	;DUAL DAC AND OPTO I/O INTERFACE.
+                       	
+                       	
+       2043            	PORTCP                  EQU     2043H   ;8255 control port
+                       						;address
+       2040            	PORTA                   EQU     2040H   ;port A address
+       2041            	PORTB                   EQU     2041H   ;port B address
+       2042            	PORTC                   EQU     2042H   ;port C address
+                       	
+                       	****** STAIR CASE WAVE FORM ***********
+                       	
+9000                   	        ORG     9000H
+9000                   		       
+9000   75 81 60        		MOV	SP,#60H
+                       	
+9003   90 20 43        	    	MOV	DPTR,#PORTCP
+9006   74 80           		MOV	A,#80H		;initialise 8255
+9008   F0              		MOVX	@DPTR,A		;port c high as o/p
+9009                   	START:  
+9009   74 00           		MOV	A,#00H	     ;initialise D to A i/p to 00h(min)
+900B   12 90 25        		LCALL	SUB	     ;output to both D to A	
+900E   74 3F           		MOV	A,#3FH       ;initialise D to A i/p to 3fh(mid)
+9010   12 90 25        		LCALL	SUB	     ;output to both D to A	
+9013   74 7F           		MOV	A,#7FH	     ;initialise D to A i/p to 7fh(mid))
+9015   12 90 25        		LCALL	SUB	     ;output to both D to A
+9018   74 BF           	        MOV     A,#BFH       ;initialise D to A i/p to Bfh(mid))
+901A   12 90 25        		LCALL	SUB	     ;output to both D to A	
+901D   74 FF           	        MOV     A,#FFH       ;initialise D to A i/p to ffh(max)
+901F   12 90 25        		LCALL	SUB	     ;output to both D to A	
+                       	
+9022   02 90 09        		LJMP	START
+                       	
+9025                   	SUB:
+9025   90 20 40        		MOV	DPTR,#PORTA
+9028   F0              		MOVX	@DPTR,A
+9029   90 20 41        		MOV	DPTR,#PORTB
+902C   F0              		MOVX	@DPTR,A
+902D   C0 00           	        PUSH R0
+902F   C0 01           		PUSH R1
+9031   78 06           	        MOV  R0,#06H         ;5 msecs delay
+9033                   	B2:	
+9033   79 FF           	        MOV  R1,#FFH
+9035                   	B1:	
+9035   00              		NOP
+9036   D9 FD           	        DJNZ R1,B1
+9038   D8 F9           	        DJNZ R0,B2
+g  6 2004 10:49                                                                                                  Page    2
+
+
+
+
+903A   D0 01           		POP R1
+903C   D0 00           		POP R0
+903E   22              		RET
+903F                   	        
+903F                   	        END
+903F                   	        END
+  Fri Aug  6 2004 10:49                                                                                                  Page    3
+
+
+Defined            Symbol Name             Value                References
+
+   44    B1                                 9035           46
+   42    B2                                 9033           47
+  Pre    BSECT                              0000      
+  Pre    CODE                               9000           13
+  Pre    DATA                               0000      
+    7    PORTA                           =  2040           35
+    8    PORTB                           =  2041           37
+    9    PORTC                           =  2042      
+    5    PORTCP                          =  2043           17
+  Pre    RSECT                              0000      
+   20    START                              9009           32
+   34    SUB                                9025           22     24     26     28     30
+
+
+
+
+           Lines Assembled :  52             Assembly Errors :  0
+
+
+

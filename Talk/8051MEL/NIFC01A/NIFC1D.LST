@@ -1,0 +1,89 @@
+  Sat Aug 27 2005 14:41                                                                                                  Page    1
+
+
+
+
+
+
+
+                         8051 Macro Assembler                  
+               ------------------------------------------------
+
+                       Input  Filename : E:NIFC1D.asm
+                       Output Filename : E:NIFC1D.obj
+
+
+    1                          	;WITH 51MR / 51ME LED VERSION
+    2                          	
+    3                          	;Test program for ALS-NIFC-01 half step Anticlock wise       
+    4                          	
+    5   9000                   	         org 9000H
+    6                          	
+    7   9000   74 80           	        mov     a,#80h             ;8255 initialisation
+    8   9002   90 20 43        	        mov     dptr,#2043h        ;PC Cntrl address = 2043h     
+    9   9005   F0              		movx 	@dptr,a
+   10                          	
+   11   9006   74 0D           	        mov     a,#0dh             ;phase c switched ON
+   12   9008   90 20 42        	        mov     dptr,#2042h        ;PC Data address = 2042h
+   13   900B   F0              		movx 	@dptr,a
+   14   900C   12 90 69        	        lcall   delay
+   15   900F   12 90 69        	        lcall   delay
+   16   9012   74 09           	        mov     a,#09h             ;phases c and b switched ON
+   17   9014   90 20 42        	        mov     dptr,#2042h
+   18   9017   F0              		movx 	@dptr,a
+   19   9018   12 90 69        	        lcall   delay
+   20   901B   12 90 69        	        lcall   delay
+   21   901E   74 0B           	        mov     a,#0bh             ;phase b switched ON
+   22   9020   90 20 42        	        mov     dptr,#2042h
+   23   9023   F0              		movx 	@dptr,a
+   24   9024   12 90 69        	        lcall   delay
+   25   9027   12 90 69        	        lcall   delay
+   26   902A   74 03           	        mov     a,#03h             ;phases b and d switched ON
+   27   902C   90 20 42        	        mov     dptr,#2042h
+   28   902F   F0              		movx 	@dptr,a
+   29   9030   12 90 69        	        lcall   delay
+   30   9033   12 90 69        	        lcall   delay
+   31   9036   74 07           	        mov     a,#07h             ;phase d switched ON
+   32   9038   90 20 42        	        mov     dptr,#2042h
+   33   903B   F0              		movx 	@dptr,a
+   34   903C   12 90 69        	        lcall   delay
+   35   903F   12 90 69        	        lcall   delay
+   36   9042   74 06           	        mov     a,#06h             ;phases d and a switched ON
+   37   9044   90 20 42        	        mov     dptr,#2042h
+   38   9047   F0              		movx 	@dptr,a
+   39   9048   12 90 69        	        lcall   delay
+   40   904B   12 90 69        	        lcall   delay
+   41   904E   74 0E           	        mov     a,#0eh             ;phase a switched ON
+   42   9050   90 20 42        	        mov     dptr,#2042h
+   43   9053   F0              		movx 	@dptr,a
+   44   9054   12 90 69        	        lcall   delay
+   45   9057   12 90 69        	        lcall   delay
+   46   905A   74 0C           	        mov     a,#0ch             ;phases a and c switched ON
+   47   905C   90 20 42        	        mov     dptr,#2042h
+  Sat Aug 27 2005 14:41                                                                                                  Page    2
+
+
+
+
+   48   905F   F0              		movx 	@dptr,a
+   49   9060   12 90 69        	        call   delay 
+   50   9063   12 90 69        	        lcall   delay 
+   51                          	
+   52   9066   12 00 03        	        lcall 0003h
+   53                          	
+   54                          	
+   55   9069                   	delay: 
+   56   9069   78 F7           	        mov  r0,#f7h        ;delay subroutine    
+   57   906B   79 FF           	oloop:  mov  r1,#ffh 
+   58   906D   D9 FE           	iloop:  djnz r1,iloop
+   59   906F   D8 FA           		djnz r0,oloop
+   60   9071   22              	        ret
+   61                          	
+   62   9072                   	        end
+
+
+
+           Lines Assembled :  62             Assembly Errors :  0
+
+
+

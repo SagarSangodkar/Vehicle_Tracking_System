@@ -1,0 +1,161 @@
+import time
+import serial
+import io
+x=[]
+phone = serial.Serial("COM33",9600,timeout=5)
+def sleep():
+    time.sleep(.1)
+def sleeps():
+    time.sleep(5)
+def sleepy():
+    time.sleep(10)
+def intialise():
+   print "Intialising the modem"
+   phone.write(b'ATZ\r')
+   sleep()
+   x=phone.read(50)
+   sleep()
+   print x
+   phone.write(b'AT\r')
+   sleep()
+   x=phone.read(50)
+   sleep()
+   print x
+def register():
+   print "Checking for network registeration"
+   phone.write(b'AT+CREG?\r')
+   sleep()
+   x=phone.read(50)
+   sleep()
+   print x
+def signal():
+   print "Checking the signal strength"
+   phone.write(b'AT+CSQ\r')
+   sleep()
+   x=phone.read(50)
+   sleep()
+   print x
+def sms_format(c):
+    print "Setting SMS format"
+    if(c==0):
+        print "SELECTED: PDU mode"
+        phone.write(b'AT+CMGF=0\r')
+        sleep()
+        x=phone.read(100)
+        sleep()
+        print x
+    else:
+        print "SELECTED: Text mode"
+        phone.write(b'AT+CMGF=1\r')
+        sleep()
+        x=phone.read(100)
+        sleep()
+        print x
+def operator():
+   print "Checking for default operator"
+   phone.write(b'AT+COPS?\r')
+   sleep()
+   x=phone.read(50)
+   sleep()
+   print x
+def new_message():
+   print "Checking for new messages"
+   sms_format(1)
+   phone.write(b'AT+CNMI=1,1,0,1,0\r')
+   sleep()
+   x=phone.read(100)
+   sleep()
+   print x
+   phone.write(b'AT+CPMS="SM","SM","SM"\r')
+   sleep()
+   x=phone.read(100)
+   sleep()
+   print x
+def reading():
+     print "Reading all the messages stored on SIM card"
+     phone.write(b'AT+CMGL="ALL"\r')
+     sleeps()
+     x=phone.read(1000)
+     sleeps()
+     print x
+def delete():
+    print "Deleting message"
+    i=raw_input("Enter the index number of the message you want deleted")
+    phone.write(b'AT+CMGD='+i.encode()+'\r')
+    sleep()
+    x=phone.read(100)
+    sleep()
+    print x
+def send(receipient,message):
+   print "Sending a message"
+   sms_format(1)
+   print "Setting message parameters"
+   phone.write(b'AT+CSMP=49,147,0,0\r')
+   sleep()
+   x=phone.read(100)
+   sleep()
+   print x
+   phone.write(b'AT+CMGS="' + receipient.encode() + '"\r')
+   sleeps()
+   phone.write(message)
+   sleeps()
+   phone.write(chr(26))
+   x=phone.read(500)
+   sleeps()
+   print x
+   x=phone.read(500)
+   sleeps()
+   print x
+def main ():
+    flag=0
+    choice=[]
+    c =[]
+    temp=0
+    while(flag==0):
+        print "1. Intialise modem"
+        print "2. Network registration"
+        print "3. Check signal strength"
+        print "4. Select PDU or text mode"
+        print "5. Default operator"
+        print "6. Read messages"
+        print "7. Check for new messages"
+        print "8. Send a message"
+        print "9. Delete messages"
+        print "10. Exit"
+        choice=input("Choose your option")
+        print "Entered choice ="
+        print choice
+        if(choice==1):
+            intialise()
+        elif(choice==2):
+            register()
+        elif(choice==3):
+            signal()
+        elif(choice==4):
+            c=input("Enter 0 for PDU mode and 1 for text mode")
+            sms_format(c)
+        elif(choice==5):
+            operator()
+        elif(choice==6):
+           reading()
+        elif(choice==7):
+            new_message()
+        elif(choice==8):
+            receipient=raw_input("Enter the number you wish to send the message to")
+            print "Entered number ="
+            print receipient
+            message=raw_input("Enter the message")
+            print "Entered message ="
+            print message
+            send(receipient,message)
+        elif(choice==9):
+            delete()
+        elif(choice==10):
+            print "Exiting"
+            phone.close()
+            phone.flush()
+            break
+        elif(choice <1 or choice>10):
+            print "Invalid choice!! Please check your option"
+if __name__ == "__main__":
+    main()

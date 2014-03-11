@@ -1,0 +1,402 @@
+  Tue Mar 27 2007 13:09                                                                                                  Page    1
+
+
+
+
+
+
+
+                         8051 Macro Assembler                  
+               ------------------------------------------------
+
+                       Input  Filename : n17a.asm
+                       Output Filename : n17a.obj
+
+
+    1                          	;WITH SDA-31/51/LED VERSION
+    2                          	
+    3                          	;TEST PROGRAM FOR ALS-NIFC-17
+    4                          	;This program can be entered in the RAM location
+    5                          	;9000H and execute the program using GO command.
+    6                          	
+    7          0035            	req	 	equ	35h
+    8          0036            	preq		equ	36h
+    9          0037            	freq		equ	37h
+   10          2043            	cntl    	equ     2043h
+   11          2040            	porta   	equ     2040h
+   12          2041            	portb   	equ     2041h
+   13          2042            	portc   	equ     2042h
+   14          6850            	delay           equ     6850h
+   15                          	
+   16   9000                   	        org 9000h
+   17                          	
+   18   9000   90 20 43        		mov  dptr,#cntl
+   19   9003   74 82           		mov a,#82h
+   20   9005   F0              	        movx @dptr,a            ;portA i/p,portC, portb  as o/p port
+   21   9006   90 20 40        		mov dptr,#porta
+   22   9009   74 0F           		mov	a,#0fh
+   23   900B   F0              		movx	@dptr,a	  	;turn off all request leds
+   24   900C   74 F0           		mov	a,#f0h
+   25   900E   F0              		movx	@dptr,a
+   26   900F   75 37 F0        		mov	freq,#f0h	
+   27   9012                   	next:
+   28                          	;************************************************
+   29                          	;READING THE REQUEST OF GROUND FLOOR
+   30                          	;from GND floor look for all possible combinations of requests
+   31                          	;i.e requests from 1 or 2 or 3 floor (gnd floor also)
+   32                          	;********************************************
+   33                          	
+   34   9012   E5 37           		mov	a,freq
+   35   9014   B4 F0 12        		cjne	a,#f0h,nextp
+   36   9017   90 20 41        		mov	dptr,#portb	 ;reading the request status
+   37   901A   E0              		movx	a,@dptr
+   38   901B   54 0F           		anl	a,#0fh		
+   39   901D   F5 35           		mov	req,a
+   40   901F   00              	        NOP
+   41   9020   00              	        NOP
+   42   9021   B4 0E 05        		cjne	a,#0eh,nextp	 ;is it gnd to gnd floor request
+   43   9024   12 91 67        		lcall   floor1	         ;(yes)then loop back
+   44   9027   80 E9           		sjmp	next
+   45   9029                   	nextp:  
+   46   9029   E5 35           		mov	a,req
+   47   902B   00              	        NOP
+  Tue Mar 27 2007 13:09                                                                                                  Page    2
+
+
+
+
+   48   902C   00              	        NOP
+   49   902D   B4 0D 0D        		cjne	a,#0dh,next1	 ;is it gnd to first floor request
+   50   9030   75 36 F0        		mov	preq,#f0h
+   51   9033   75 37 F3        		mov	freq,#f3h
+   52   9036   12 91 AB        		lcall  movup		 ;blink from gnd to 1 floor
+   53   9039   00              		nop
+   54   903A   12 91 78        		lcall floor2
+   55                          	
+   56   903D                   	next1:
+   57   903D   E5 35           		mov	a,req
+   58   903F   00              	        NOP
+   59   9040   00              	        NOP
+   60   9041   B4 0B 0D        		cjne	a,#0bh,next2	  ;is it gnd to second floor request
+   61   9044   75 36 F0        		mov	preq,#f0h
+   62   9047   75 37 F6        		mov	freq,#f6h		
+   63   904A   12 91 AB        		lcall  movup		    ;blink from gnd to 2 floor
+   64   904D   00              		nop
+   65   904E   12 91 89        		lcall  floor3
+   66                          	
+   67   9051   E5 35           	next2:	mov	a,req
+   68   9053   00              	        NOP
+   69   9054   00              	        NOP
+   70   9055   B4 07 0D        		cjne a,#07h,next3	   ;is it gnd to 3 floor request
+   71   9058   75 36 F0        		mov	preq,#f0h
+   72   905B   75 37 F9        		mov	freq,#f9h
+   73   905E   12 91 AB        		lcall  movup	        ;blink from gnd to 3 floor
+   74   9061   00              		nop
+   75   9062   12 91 9A        		lcall floor4		
+   76                          	
+   77                          	;************************************************
+   78                          	;READING THE REQUEST OF FIRST FLOOR
+   79                          	;from FIRST floor look for all possible combinations of requests
+   80                          	;i.e requests from GND or 2 or 3 floor (from first floor also)
+   81                          	;********************************************		
+   82   9065                   	next3:
+   83   9065   E5 37           		mov	a,freq
+   84   9067   00              	        NOP
+   85   9068   00              	        NOP
+   86   9069   B4 F3 4F        		cjne	a,#f3h,next4
+   87   906C   90 20 41        	        mov	dptr,#portb
+   88   906F   E0              	        movx	a,@dptr
+   89   9070   54 0F           	        anl	a,#0fh
+   90   9072   F5 35           	        mov	req,a
+   91   9074   00              	        NOP
+   92   9075   00              	        NOP
+   93   9076   B4 0E 0C        	        cjne	a,#0eh,next5	  ;is it 1 to gnd floor request
+   94   9079   75 36 F3        	        mov	preq,#f3h
+   95   907C   75 37 F0        	        mov	freq,#f0h
+   96   907F   12 91 CC        	        lcall movdown		  ;blink from 1 to gnd floor
+   97   9082   12 91 67        	        lcall  floor1
+   98                          	
+   99   9085                   	next5:
+  100   9085   E5 35           		mov	a,req
+  101   9087   00              	        NOP
+  102   9088   00              	        NOP
+  103   9089   B4 0D 06        		cjne	a,#0dh,next6	  ;if request from 1 to 1 floor
+  104                          					  ; then loop back
+  Tue Mar 27 2007 13:09                                                                                                  Page    3
+
+
+
+
+  105   908C   12 91 78        		lcall	floor2
+  106   908F   02 90 65        		ljmp	next3
+  107   9092                   	next6:
+  108   9092   E5 35           		mov	a,req
+  109   9094   00              	        NOP
+  110   9095   00              	        NOP
+  111   9096   B4 0B 0F        		cjne	a,#0bh,next7	  ;is it 1 to 2 floor request
+  112   9099   75 36 F3        		mov	preq,#f3h
+  113   909C   75 37 F6        		mov	freq,#f6h	
+  114   909F   12 91 AB        		lcall  movup		  ;blink the led from 1 to 2 floor
+  115   90A2   12 91 89        		lcall floor3
+  116   90A5   75 37 F6        		mov	freq,#f6h
+  117                          	
+  118   90A8                   	next7:	
+  119   90A8   E5 35           		mov	a,req		  ;is it 1 to 3 floor request
+  120   90AA   00              	        NOP
+  121   90AB   00              	        NOP
+  122   90AC   B4 07 0C        		cjne	a,#07h,next4
+  123   90AF   75 36 F3        		mov	preq,#f3h
+  124   90B2   75 37 F9        		mov	freq,#f9h	
+  125   90B5   12 91 AB        		lcall movup	       ;blink the led from 1 to 3 floor
+  126   90B8   12 91 9A        		lcall  floor4
+  127                          	
+  128                          	;************************************************
+  129                          	;READING THE REQUEST OF SECOND FLOOR
+  130                          	;from SECOND floor look for all possible combinations of requests
+  131                          	;i.e requests from GND or 2 or 3 floor (from second floor also)
+  132                          	;********************************************		
+  133   90BB                   	next4:	
+  134   90BB   E5 37           		mov	a,freq
+  135   90BD   00              	        NOP
+  136   90BE   00              	        NOP
+  137   90BF   B4 F6 4E        		cjne	a,#f6h,next8
+  138   90C2   90 20 41        		mov	dptr,#portb
+  139   90C5   E0              		movx	a,@dptr
+  140   90C6   54 0F           		anl	a,#0fh
+  141   90C8   F5 35           		mov	req,a
+  142   90CA   00              	        NOP
+  143   90CB   00              	        NOP
+  144   90CC   B4 0E 0C        		cjne	a,#0eh,next9		;if 2 to gnd floor request
+  145   90CF   75 36 F6        		mov	preq,#f6h
+  146   90D2   75 37 F0        		mov	freq,#f0h
+  147   90D5   12 91 CC        		lcall  movdown	
+  148   90D8   12 91 67        		lcall  floor1
+  149   90DB                   	next9:	
+  150   90DB   E5 35           		mov	a,req
+  151   90DD   00              	        NOP
+  152   90DE   00              	        NOP
+  153   90DF   B4 0D 0F        		cjne	a,#0dh,nexta		;is 2 to first floor request
+  154   90E2   75 36 F6        		mov	preq,#f6h
+  155   90E5   75 37 F3        		mov	freq,#f3h	
+  156   90E8   12 91 CC        		lcall  movdown
+  157   90EB   12 91 78        		lcall  floor2
+  158   90EE   02 90 65        		ljmp	next3	
+  159                          	
+  160   90F1                   	nexta:	
+  161   90F1   E5 35           		mov	a,req
+  Tue Mar 27 2007 13:09                                                                                                  Page    4
+
+
+
+
+  162   90F3   00              	        NOP
+  163   90F4   00              	        NOP
+  164   90F5   B4 0B 05        		cjne	a,#0bh,nextb	     ;if request from 2 to 2 floor 
+  165                          					     ;then loop back
+  166   90F8   12 91 89        		lcall  floor3
+  167   90FB   80 BE           		sjmp	next4
+  168   90FD                   	nextb:	
+  169   90FD   E5 35           		mov	a,req
+  170   90FF   00              	        NOP
+  171   9100   00              	        NOP
+  172   9101   B4 07 0C        		cjne	a,#07h,next8
+  173   9104   75 36 F6        		mov	preq,#f6h
+  174   9107   75 37 F9        		mov	freq,#f9h	
+  175   910A   12 91 AB        		lcall  movup
+  176   910D   12 91 9A        		lcall  floor4	
+  177                          	
+  178                          	;************************************************
+  179                          	;READING THE REQUEST OF third FLOOR
+  180                          	;from THIRD floor look for all possible combinations of requests
+  181                          	;i.e requests from GND 1 or 2 or 3 floor	(from third floor also)
+  182                          	;********************************************		
+  183   9110   E5 37           	next8:	mov	a,freq
+  184   9112   B4 F9 4F        		cjne	a,#f9h,ende
+  185   9115   90 20 41        		mov	dptr,#portb
+  186   9118   E0              		movx	a,@dptr
+  187   9119   54 0F           		anl	a,#0fh
+  188   911B   F5 35           		mov	req,a
+  189   911D   00              	        NOP
+  190   911E   00              	        NOP
+  191   911F   B4 0E 0C        		cjne	a,#0eh,nexte		;if 3 to gnd floor request
+  192   9122   75 36 F9        		mov	preq,#f9h
+  193   9125   75 37 F0        		mov	freq,#f0h
+  194   9128   12 91 CC        		lcall  movdown	
+  195   912B   12 91 67        		lcall	floor1
+  196                          	
+  197   912E                   	nexte:	
+  198   912E   E5 35           		mov	a,req
+  199   9130   00              	        NOP
+  200   9131   00              	        NOP
+  201   9132   B4 0D 0F        		cjne	a,#0dh,nextf		;is 3 to first floor request
+  202   9135   75 36 F9        		mov	preq,#f9h
+  203   9138   75 37 F3        		mov	freq,#f3h	
+  204   913B   12 91 CC        		lcall  movdown
+  205   913E   12 91 78        		lcall floor2
+  206   9141   02 90 65        		ljmp	next3	
+  207                          	
+  208   9144                   	nextf:	
+  209   9144   E5 35           		mov	a,req
+  210   9146   00              	        NOP
+  211   9147   00              	        NOP
+  212   9148   B4 0B 0F        		cjne	a,#0bh,nextg		;is 3 to 2 floor request
+  213   914B   75 36 F9        		mov	preq,#f9h
+  214   914E   75 37 F6        		mov	freq,#f6h	
+  215   9151   12 91 CC        		lcall  movdown
+  216   9154   12 91 89        		lcall  floor3
+  217   9157   02 90 65        		ljmp	next3
+  218   915A                   	nextg:
+  Tue Mar 27 2007 13:09                                                                                                  Page    5
+
+
+
+
+  219   915A   E5 35           		mov	a,req
+  220   915C   00              	        NOP
+  221   915D   00              	        NOP
+  222   915E   B4 07 03        		cjne	a,#07h,ende		;if request from 3 to 3 floor
+  223                          						;then loop back
+  224   9161   12 91 89        		lcall  floor3
+  225   9164                   	ende:	
+  226   9164   02 90 12        		ljmp	next
+  227                          	;********************************************************************
+  228   9167   90 20 40        	floor1:	mov	dptr,#porta	     ;to glow ground floor request led
+  229   916A   74 E0           	       	mov	a,#e0h
+  230   916C   F0              	     	movx	@dptr,a
+  231   916D   78 99           	        mov     r0,#99h
+  232   916F   79 99           	        mov     r1,#99h
+  233   9171   12 68 50        	      lcall delay
+  234   9174   12 68 50        	      lcall  delay
+  235   9177   22              	        ret
+  236                          	
+  237                          	
+  238   9178   90 20 40        	floor2:	mov	dptr,#porta	    ;to glow first floor request led 
+  239   917B   74 D3           	        mov	a,#d3h
+  240   917D   F0              	        movx	@dptr,a
+  241   917E   78 99           	        mov     r0,#99h
+  242   9180   79 99           	        mov     r1,#99h
+  243   9182   12 68 50        	        lcall  delay
+  244   9185   12 68 50        	        lcall  delay
+  245   9188                   	l
+  246   9188   22              	        ret
+  247                          	
+  248   9189   90 20 40        	floor3:	mov	dptr,#porta	   ;to glow second floor request led
+  249   918C   74 B6           	        mov	a,#b6h
+  250   918E   F0              	        movx	@dptr,a
+  251   918F   78 99           	        mov     r0,#99h
+  252   9191   79 99           	        mov     r1,#99h
+  253   9193   12 68 50        	        lcall  delay
+  254   9196   12 68 50        	        lcall  delay
+  255   9199   22              	        ret
+  256                          	
+  257   919A   90 20 40        	floor4:	mov	dptr,#porta	   ;to glow third floor request led
+  258   919D   74 79           	        mov	a,#79h
+  259   919F   F0              	        movx	@dptr,a
+  260   91A0   78 99           	        mov     r0,#99h
+  261   91A2   79 99           	        mov     r1,#99h
+  262   91A4   12 68 50        	        lcall  delay
+  263   91A7   12 68 50        	        lcall  delay
+  264   91AA   22              	        ret			
+  265                          	
+  266                          	;**********************************
+  267                          	;ELEVATOR UP			        ;to glow leds from down to up
+  268                          	
+  269   91AB   AD 36           	movup:	mov	r5,preq
+  270   91AD   78 50           	loop1:  mov     r0,#50h
+  271   91AF   79 20           	        mov     r1,#20h
+  272   91B1   12 68 50        	        lcall  delay
+  273   91B4   12 68 50        	        lcall  delay        
+  274   91B7   90 20 40        	        mov    dptr,#porta
+  275   91BA   ED              	        mov    a,r5
+  Tue Mar 27 2007 13:09                                                                                                  Page    6
+
+
+
+
+  276   91BB   F0              	        movx   @dptr,a
+  277   91BC   0D              	        inc    r5
+  278   91BD   78 50           	        mov    r0,#50h
+  279   91BF   79 20           	        mov    r1,#20h
+  280   91C1   12 68 50        	        lcall  delay
+  281   91C4   12 68 50        	        lcall  delay
+  282   91C7   ED              	        mov    a,r5
+  283                          	
+  284   91C8   B5 37 E2        	        cjne   a,freq,loop1
+  285   91CB   22              	        ret
+  286                          	;*****************************************	
+  287                          	
+  288   91CC   AD 36           	movdown:  mov	r5,preq		   ;to glow led from up to down
+  289   91CE   78 50           	loop2:    mov   r0,#50h
+  290   91D0   79 20           	          mov   r1,#20h
+  291   91D2   12 68 50        		  lcall  delay
+  292   91D5   12 68 50        	          lcall  delay
+  293   91D8   90 20 40        		  mov	dptr,#porta
+  294   91DB   ED              		  mov	a,r5
+  295   91DC   F0              		  movx	@dptr,a
+  296   91DD   1D              		  dec	r5
+  297   91DE   78 50           	          mov   r0,#50h
+  298   91E0   79 20           	          mov   r1,#20h
+  299   91E2   12 68 50        		  lcall   delay
+  300   91E5   12 68 50        	          lcall   delay
+  301   91E8   ED              	     	  mov	a,r5
+  302                          	
+  303   91E9   B5 37 E2        		  cjne	a,freq,loop2
+  304   91EC   22              		  ret
+  305                          	
+  306   91ED                   		  end
+  306   91ED                   		  end
+  Tue Mar 27 2007 13:09                                                                                                  Page    7
+
+
+Defined            Symbol Name             Value                References
+
+  Pre    BSECT                              0000      
+  Pre    CODE                               9000           16
+  Pre    DATA                               0000      
+  Pre    RSECT                              0000      
+   10    cntl                            =  2043           18
+   14    delay                           =  6850          233    234    243    244    253    254    262    263    272    273    280
+                                                          281    291    292    299    300
+  225    ende                               9164          184    222
+  228    floor1                             9167           43     97    148    195
+  238    floor2                             9178           54    105    157    205
+  248    floor3                             9189           65    115    166    216    224
+  257    floor4                             919A           75    126    176
+    9    freq                            =  0037           26     34     51     62     72     83     95    113    116    124    134
+                                                          146    155    174    183    193    203    214    284    303
+  245    l                                  9188      
+  270    loop1                              91AD          284
+  289    loop2                              91CE          303
+  288    movdown                            91CC           96    147    156    194    204    215
+  269    movup                              91AB           52     63     73    114    125    175
+   27    next                               9012           44    226
+   56    next1                              903D           49
+   67    next2                              9051           60
+   82    next3                              9065           70    106    158    206    217
+  133    next4                              90BB           86    122    167
+   99    next5                              9085           93
+  107    next6                              9092          103
+  118    next7                              90A8          111
+  183    next8                              9110          137    172
+  149    next9                              90DB          144
+  160    nexta                              90F1          153
+  168    nextb                              90FD          164
+  197    nexte                              912E          191
+  208    nextf                              9144          201
+  218    nextg                              915A          212
+   45    nextp                              9029           35     42
+   11    porta                           =  2040           21    228    238    248    257    274    293
+   12    portb                           =  2041           36     87    138    185
+   13    portc                           =  2042      
+    8    preq                            =  0036           50     61     71     94    112    123    145    154    173    192    202
+                                                          213    269    288
+    7    req                             =  0035           39     46     57     67     90    100    108    119    141    150    161
+                                                          169    188    198    209    219
+
+
+
+
+           Lines Assembled :  306             Assembly Errors :  0
+
+
+

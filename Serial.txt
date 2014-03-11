@@ -1,0 +1,17 @@
+from serial import *
+c=Serial(29) //fro COM 30
+c.close()
+c.open()
+c.read(c.inWaiting())
+b=c.read(c.inWaiting())
+cur.execute('INSERT INTO users VALUES ("%s" ,"%d")' %(b,a))
+cur.execute('SELECT * from users')
+for data in cur.fetchall():
+	print '%s \t %s' % data
+ser.read(455)
+
+
+OR
+import serial
+ser = serial.Serial(0)  # open first serial port
+print ser.portstr       # check which port was really used

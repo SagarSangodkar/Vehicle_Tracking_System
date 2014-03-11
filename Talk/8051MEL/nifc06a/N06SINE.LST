@@ -1,0 +1,153 @@
+g 29 2005 10:18                                                                                                  Page    1
+
+
+
+
+
+
+
+                 8051 Macro Assembler                  
+       ------------------------------------------------
+
+               Input  Filename : E:DAC.asm
+               Output Filename : E:DAC.obj
+
+
+       2040            	PORTA	EQU		2040H
+       2041            	PORTB	EQU		2041H
+       2042            	PORTC	EQU		2042H
+       2043            	COMND	EQU		2043H
+                       	
+       0040            	COUNT   EQU     40H
+       0041            	FLAG    EQU     41H
+       0042            	TEMP1   EQU     42H
+       0043            	TEMP2   EQU     43H
+       0044            	MSD     EQU     44H
+       0045            	LSD     EQU     45H
+                       	
+                       	; 10 WILL BE DISPLAYED ON THE 7 SEG DISPLAY INDICATING THE 
+                       	; GENERATION OF 10Hz SINE WAVE USING DAC
+                       	; SIMILARLY 20 OR 30 OR 40 WILL BE DISPLAYED
+                       	
+                       	; BY DEFAULT AT RESET IT WILL BE GENERATING 10 Hz WAVE
+                       	
+                       	; TOTAL NUMBER OF SAMPLES CONSIDERED IS 54
+                       	; GENERATING 100mS (10Hz) PERIOD SINE WAVE AS AN EXAMPLE
+                       	
+                       	; TIMER0 IS USED TO GENERATE SAMPLE OUTPUTTING RATE
+                       	; THAT DELAY COMES OUT TO BE 1.85mS
+                       	; 100mS / 54 = 1.85mS (BY LOADING F917H INTO ITS REGRS)
+                       	; SO EACH SAMPLE DATA IS PRESENTED TO DAC AT A RATE OF 1.85mS
+                       	; S0 54 SAMPLES AT 1.85mS RATE COMES OUT TO BE APPROXLY 100mS
+                       	
+                       	; SIMILARLY FOR OTHER FREQUENCIES
+                       	; FOR 50mS (20Hz) SAMPLE RATE IS 925uS (BY LOADING FC8AH INTO ITS REGRS)
+                       	; FOR 33mS (30Hz) SAMPLE RATE IS 611uS (BY LOADING FDB8H INTO ITS REGRS)
+                       	; FOR 25mS (40Hz) SAMPLE RATE IS 462uS (BY LOADING FE45H INTO ITS REGRS)
+                       	
+9000                   	        ORG 9000H
+9000   02 80 23        	        LJMP MAIN
+                       	
+                       	; TIMER ISR WHICH DECIDES SAMPLE RATE
+8020                   	        ORG 8020H
+8020   02 80 3A        	        LJMP TMR_ISR
+                       	
+                       	; MAIN PROGRAM SECTION
+                       	
+8023                   	MAIN:
+                       	
+8023   90 20 43        			MOV DPTR,#COMND
+8026   74 80           			MOV A,#80H
+8028   F0              			MOVX @DPTR,A
+                       	
+g 29 2005 10:18                                                                                                  Page    2
+
+
+
+
+                       	; INITIALIZE TIMER0 FOR DECIDING SAMPLE OUTPUT RATE
+8029   12 80 65        	        LCALL TMR_INIT
+                       	
+                       	; GET SAMPLE FROM THE TABLE WHICH IS BEING POINTED BY DPTR
+                       	; USING COUNT AS INDEX
+802C   75 40 00        	        MOV COUNT,#00H
+802F   90 80 6F        	        MOV DPTR,#TABLE
+                       	
+                       	; ENABLE TIMER0 INTERRUPT AND START IT
+8032   D2 A9           	        SETB ET0
+8034   D2 AF           	        SETB EA
+8036   D2 8C           	        SETB TR0
+8038                   	        
+8038   80 FE           	H:      SJMP H
+                       	
+803A                   	TMR_ISR:
+                       	
+                       	; RELOAD TIMER0 WITH THE SAMPLING RATE
+803A   C2 8C           	        CLR TR0
+                       	
+803C   75 8C F9        	        MOV TH0,#0F9H
+803F   75 8A 19        	        MOV TL0,#19H
+                       	
+8042   D2 8C           	        SETB TR0
+                       	
+                       	; COUNT IS USED AS INDEX BY DPTR TO FETCH THE SAMPLES
+                       	; WITH MAX OF 54 SAMPLES
+                       	
+8044   E5 40           	        MOV A,COUNT
+8046   B4 34 06        	        CJNE A,#34H,D1
+                       	
+                       	; REINITIALIZE DPTR TO TABLE AGAIN AND COUNT TO 00H
+8049   90 80 6F        	        MOV DPTR,#TABLE
+804C   75 40 00        	        MOV COUNT,#00H
+804F                   	D1:
+804F   E5 40           	        MOV A,COUNT
+8051   93              	        MOVC A,@A+DPTR
+8052   05 40           	        INC COUNT
+                       	
+8054   C0 83           			PUSH DPH
+8056   C0 82           			PUSH DPL
+8058                   			
+                       	; GET THE SAMPLE AND PRESENT IT TO DAC
+8058   90 20 40        	        MOV DPTR,#PORTA
+805B   F0              	        MOVX @DPTR,A
+805C   90 20 41        	        MOV DPTR,#PORTB
+805F   F0              	        MOVX @DPTR,A
+                       	
+8060   D0 82           	        POP DPL
+8062   D0 83           	        POP DPH
+                       	
+8064   32              	        RETI
+                       	
+8065                   	TMR_INIT:
+                       	; TIMER0 INITIALIZED TO OPERATE IN MODE 1 (16 BIT MODE)
+8065   75 89 01        	        MOV TMOD,#01H
+8068   75 8C F9        	        MOV TH0,#0F9H
+g 29 2005 10:18                                                                                                  Page    3
+
+
+
+
+806B   75 8A 19        	        MOV TL0,#19H
+806E   22              	        RET
+                       	
+806F   80 90 A1 B1 C0  	TABLE:  DB      80H,90H,0A1H,0B1H,0C0H,0CDH,0DAH,0E5H,0EEH,0F6H,0FBH,0FEH,0FFH
+8074   CD DA E5 EE F6 
+8079   FB FE FF 
+807C   FF FE FB F6 EE  	        DB      0FFH,0FEH,0FBH,0F6H,0EEH,0E5H,0DAH,0CDH,0C0H,0B1H,0A1H,90H,80H
+8081   E5 DA CD C0 B1 
+8086   A1 90 80 
+8089   80 70 5F 4F 40  	        DB      80H,70H,5FH,4FH,40H,33H,26H,1BH,12H,0AH,05H,02H,00H
+808E   33 26 1B 12 0A 
+8093   05 02 00 
+8096   00 02 05 0A 12  	        DB      00H,02H,05H,0AH,12H,1BH,26H,33H,40H,4FH,5FH,70H,80H
+809B   1B 26 33 40 4F 
+80A0   5F 70 80 
+                       	
+80A3                   	        END
+
+
+
+           Lines Assembled :  113             Assembly Errors :  0
+
+
+

@@ -1,0 +1,15 @@
+import MySQLdb
+db = MySQLdb.connect("localhost","root","","world" )
+cur=db.cursor()
+cur.execute('Create table users(login varchar(10),id int)')
+g="sagar"
+a=98
+cur.execute("insert into users values ('John',1234)")
+cur.execute("SELECT * FROM users")
+for data in cur.fetchall():
+	print '%s \t %s' % data
+cur.execute('INSERT INTO users VALUES ("%s","%d")' %(g,a))
+cur.execute("SELECT * FROM users")
+for data in cur.fetchall():
+	print '%s \t %s' % data
+

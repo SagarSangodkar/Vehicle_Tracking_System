@@ -1,0 +1,73 @@
+  Fri Aug  6 2004 09:55                                                                                                  Page    1
+
+
+
+
+
+
+
+                         8051 Macro Assembler                  
+               ------------------------------------------------
+
+                       Input  Filename : NIFC1B.asm
+                       Output Filename : NIFC1B.obj
+
+
+    1                          	;WITH 51MR / 51ME LED VERSION
+    2                          	
+    3                          	;Test program for ALS-NIFC-01 Anticlock wise       
+    4                          	
+    5   9000                   	        org 9000h
+    6                          	
+    7   9000   74 80           	        mov a,#80h              ;8255 initialisation
+    8   9002   90 20 43        	        mov dptr,#2043h         ;PC Cntrl address = 2043h
+    9   9005   F0              		movx @dptr,a
+   10   9006                   	start:     
+   11   9006   74 0D           	        mov a,#0dh              ;phase c switched ON
+   12   9008   90 20 42        	        mov dptr,#2042h         ;PC Data address = 2042h
+   13   900B   F0              		movx @dptr,a
+   14   900C   12 90 2C        	        lcall delay
+   15   900F   74 0B           	        mov a,#0bh              ;phase b switched ON
+   16   9011   90 20 42        	        mov dptr,#2042h
+   17   9014   F0              		movx @dptr,a
+   18   9015   12 90 2C        	        lcall delay 
+   19   9018   74 07           	        mov a,#07h              ;phase d switched ON
+   20   901A   90 20 42        	        mov dptr,#2042h
+   21   901D   F0              		movx @dptr,a
+   22   901E   12 90 2C        	        lcall delay
+   23   9021   74 0E           	        mov a,#0eh              ;phase a switched ON
+   24   9023   90 20 42        	        mov dptr,#2042h
+   25   9026   F0              		movx @dptr,a
+   26   9027   12 90 2C        	        lcall delay
+   27   902A   80 DA           	        sjmp start              ;repeat the above procedure
+   28                          	
+   29   902C                   	delay: 
+   30   902C   78 F7           	        mov  r0,#f7h        ;delay subroutine    
+   31   902E   79 FF           	oloop:  mov  r1,#ffh 
+   32   9030   D9 FE           	iloop:  djnz r1,iloop
+   33   9032   D8 FA           		djnz r0,oloop
+   34   9034   22              	        ret
+   35                          	
+   36   9035                   	        end
+   36   9035                   	        end
+  Fri Aug  6 2004 09:55                                                                                                  Page    2
+
+
+Defined            Symbol Name             Value                References
+
+  Pre    BSECT                              0000      
+  Pre    CODE                               9000            5
+  Pre    DATA                               0000      
+  Pre    RSECT                              0000      
+   29    delay                              902C           14     18     22     26
+   32    iloop                              9030           32
+   31    oloop                              902E           33
+   10    start                              9006           27
+
+
+
+
+           Lines Assembled :  36             Assembly Errors :  0
+
+
+

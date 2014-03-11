@@ -1,0 +1,102 @@
+g  6 2004 10:49                                                                                                  Page    1
+
+
+
+
+
+
+
+                 8051 Macro Assembler                  
+       ------------------------------------------------
+
+               Input  Filename : N06TR.asm
+               Output Filename : N06TR.obj
+
+
+                       	;NIFC-06
+                       	;DUAL DAC AND OPTO I/O INTERFACE.
+                       	
+                       	
+       2043            	PORTCP                  EQU     2043H   ;8255 control port
+                       						;address
+       2040            	PORTA                   EQU     2040H   ;port A address
+       2041            	PORTB                   EQU     2041H   ;port B address
+       2042            	PORTC                   EQU     2042H   ;port C address
+                       	
+                       	;********TRIANGULAR  WAVE GENEATION*********
+                       	
+9000                   	        ORG 9000H
+                       	
+9000   90 20 43        		MOV DPTR,#PORTCP
+9003   74 80           		MOV A,#80H
+9005   F0              		MOVX @DPTR,A
+                       	
+9006                   	RESTART:
+9006   74 00           		MOV A,#00H
+9008   79 FF           	  	MOV R1,#FFH
+900A                   	LOOPT3:
+900A   00              		NOP
+900B                   	RISE:
+900B   12 90 28        		LCALL OUTPUT
+900E   04              		INC A
+900F   B4 FF 02        		CJNE A,#FFH,RELOOP1
+9012   80 05           		SJMP FALL
+9014                   	RELOOP1:
+9014   D9 F4           		DJNZ R1,LOOPT3
+9016   7E FF           		MOV R6,#FFH
+9018                   	LOOPT6:	
+9018   00              		NOP
+9019                   	FALL:	
+9019   12 90 28        		LCALL OUTPUT
+901C                   	FORLOOP:
+901C   14              		DEC A
+901D   B4 00 03        		CJNE A,#00H,RELOOP2
+9020   02 90 0B        		LJMP RISE
+9023                   	RELOOP2: 
+9023   DE F3           	        DJNZ R6,LOOPT6
+9025   02 90 06        		LJMP RESTART
+9028                   					
+9028                   	OUTPUT:	
+9028   90 20 40        		MOV DPTR,#PORTA
+902B   F0              		MOVX @DPTR,A
+902C   90 20 41        		MOV DPTR,#PORTB
+g  6 2004 10:49                                                                                                  Page    2
+
+
+
+
+902F   F0              		MOVX @DPTR,A
+9030   22              		RET		
+9031                   	        
+9031                   	        END
+9031                   	        END
+  Fri Aug  6 2004 10:49                                                                                                  Page    3
+
+
+Defined            Symbol Name             Value                References
+
+  Pre    BSECT                              0000      
+  Pre    CODE                               9000           13
+  Pre    DATA                               0000      
+   34    FALL                               9019           28
+   36    FORLOOP                            901C      
+   22    LOOPT3                             900A           30
+   32    LOOPT6                             9018           41
+   44    OUTPUT                             9028           25     35
+    7    PORTA                           =  2040           45
+    8    PORTB                           =  2041           47
+    9    PORTC                           =  2042      
+    5    PORTCP                          =  2043           15
+   29    RELOOP1                            9014           27
+   40    RELOOP2                            9023           38
+   19    RESTART                            9006           42
+   24    RISE                               900B           39
+  Pre    RSECT                              0000      
+
+
+
+
+           Lines Assembled :  51             Assembly Errors :  0
+
+
+

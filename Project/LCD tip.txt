@@ -1,0 +1,3 @@
+Tip for avoiding a pot for contrast
+
+Instead of using a potentiometer for the contrast setting you could use a diode and a 10K resistor. From pin 3 of the display put a diode (1N4001) to ground (pin 1 of the display). Ring on the diode should be oriented to ground! And put the 10K resistor from pin 2 (Vcc) of the display to 5V supply voltage. On several displays this gives a perfect contrast. If not then use the above mentioned 10K potentiometer. Why this is working: Measuring the voltage at the diode will give 0,65 V. And this is exactly the optimum for contrast on most displays.

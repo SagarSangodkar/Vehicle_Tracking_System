@@ -1,0 +1,7 @@
+http://tronixstuff.wordpress.com/2011/01/19/tutorial-arduino-and-gsm-cellular-part-one/
+
+http://www.sparkfun.com/datasheets/Cellular%20Modules/CEL-09533-Reference-Schematic.pdf
+
+https://www.google.co.in/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&cad=rja&ved=0CC4QFjAA&url=https%3A%2F%2Fwww.sparkfun.com%2Fproducts%2F9533&ei=ywtAUYzNDM7NrQfdzYCAAw&usg=AFQjCNGrVOGJD0KB0xC6ycikYTX6xMrnSw&bvm=bv.43287494,d.bmk
+
+http://gonzalo123.com/2011/03/21/howto-sendread-smss-using-a-gsm-modem-at-commands-and-php/

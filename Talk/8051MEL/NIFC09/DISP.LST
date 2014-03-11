@@ -1,0 +1,103 @@
+g 18 2004 15:17                                                                                                  Page    1
+
+
+
+
+
+
+
+                 8051 Macro Assembler                  
+       ------------------------------------------------
+
+               Input  Filename : DISP.asm
+               Output Filename : DISP.obj
+
+
+       2043            	CNTRL           EQU     2043H                ;CONTROL PORT ADDRESS OF  8255
+       2040            	PORTA           EQU     2040H                ;PORTA ADDRESS OF 8255 
+       2041            	PORTB           EQU     2041H                ;PORTB ADDRESS OF 8255
+       2042            	PORTC           EQU     2042H                ;PORTC ADDRESS OF 8255
+                       	
+9000                   	        ORG     9000H
+                       	
+9000   74 90           	        MOV A,#90H
+9002   90 20 43        	        MOV DPTR,#CNTRL
+9005   F0              	        MOVX @DPTR,A
+                       	
+9006   75 F0 20        	        MOV     B,#20H             ;Blank all digits
+9009   90 20 41        	BLNK2:  MOV     DPTR,#PORTB
+900C   74 FF           		MOV	A,#FFH
+900E   F0              		MOVX	@DPTR,A
+                       	
+900F   90 20 42        		MOV	DPTR,#PORTC
+9012   74 00           		MOV	A,#00H         	  ;Clock the shift register
+9014   F0              		MOVX	@DPTR,A
+                       	
+9015   74 F0           		MOV	A,#F0H
+9017   F0              		MOVX	@DPTR,A
+                       	
+9018   D5 F0 EE        	        DJNZ    B,BLNK2
+                       	
+901B                   	BACK:
+901B   74 FE           	        MOV     A,#FEH
+                       	
+901D   75 F0 21        	        MOV     B,#21H 
+9020                   	BLNK1:
+9020   90 20 41        	        MOV     DPTR,#PORTB
+9023   F0              		MOVX	@DPTR,A
+                       	
+9024   90 20 42        		MOV	DPTR,#PORTC
+9027   74 00           		MOV	A,#00H         	  ;Clock the shift register
+9029   F0              		MOVX	@DPTR,A
+                       	
+902A   74 F0           		MOV	A,#F0H
+902C   F0              		MOVX	@DPTR,A
+                       	
+902D   12 90 36        	        LCALL   DELAY
+9030   23              	        RL      A
+                       	
+9031   D5 F0 EC        		DJNZ	B,BLNK1
+                       	
+9034   80 E5           	        SJMP    BACK
+                       	
+g 18 2004 15:17                                                                                                  Page    2
+
+
+
+
+9036                   	DELAY: 
+9036   78 F7           	        mov     r0,#f7h         ;DELAY SUBROUTINE
+9038   79 FF           	oloop:  mov     r1,#ffh 
+903A   D9 FE           	iloop:  djnz    r1,iloop
+903C   D8 FA           		djnz 	r0,oloop
+903E   22              		ret
+903F                   	        
+903F                   	        END
+903F                   	        END
+  Wed Aug 18 2004 15:17                                                                                                  Page    3
+
+
+Defined            Symbol Name             Value                References
+
+   26    BACK                               901B           46
+   30    BLNK1                              9020           44
+   13    BLNK2                              9009           24
+  Pre    BSECT                              0000      
+    1    CNTRL                           =  2043            9
+  Pre    CODE                               0000      
+  Pre    DATA                               0000      
+   48    DELAY                              9036           41
+    2    PORTA                           =  2040      
+    3    PORTB                           =  2041           13     31
+    4    PORTC                           =  2042           17     34
+  Pre    RSECT                              0000      
+   51    iloop                              903A           51
+   50    oloop                              9038           52
+
+
+
+
+           Lines Assembled :  55             Assembly Errors :  0
+
+
+

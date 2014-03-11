@@ -1,0 +1,101 @@
+
+g 29 2005 14:17                                                                                                  Page    1
+
+
+
+
+
+
+
+                 8051 Macro Assembler                  
+       ------------------------------------------------
+
+               Input  Filename : E:N07A.asm
+               Output Filename : E:N07A.obj
+
+
+                       	;WITH 51MR / 51ME LED VERSION
+                       	
+                       	;Test program for ALS-NIFC-07A - polled mode
+                       	
+       2043            	CONTROL EQU     2043H                   ;control port address for 8255
+       2040            	PORTA   EQU     2040H                   ;porta address for 8255
+       2041            	PORTB   EQU     2041H                   ;portb address for 8255
+       2042            	PORTC   EQU     2042H                   ;portb address for 8255
+       677D            	UPDD    EQU     677DH                   ;display routine addr in data field
+       0040            	TEMP	EQU	40H
+                       	
+                       	
+9000                   	                ORG     9000H
+9000                   			
+9000   90 20 43        			MOV	DPTR,#CONTROL
+9003   74 90           			MOV	A,#90H			;PORT a I/P,  PORT b,c O/P
+9005   F0              			MOVX	@DPTR,A
+                       	
+9006                   	GET_NEXT:
+9006   75 40 00        	                MOV TEMP,#00H
+9009   90 F0 00        	                MOV DPTR,#F000H
+900C   E0              	                MOVX A,@DPTR
+900D   54 0F           	                ANL A,#0FH
+900F   F5 40           	                MOV TEMP,A
+                       	
+9011   E5 40           			MOV	A,TEMP
+9013   90 20 42        			MOV	DPTR,#PORTC		;OUT PUT CH NO
+9016   F0              			MOVX	@DPTR,A
+                       	
+9017   00              	                NOP
+9018   00              	                NOP
+                       	
+9019   74 0D           			MOV	A,#0DH			;SET PC6 (OE)
+901B   90 20 43        			MOV	DPTR,#CONTROL
+901E   F0              			MOVX	@DPTR,A
+                       	
+901F   90 20 43        			MOV	DPTR,#CONTROL
+9022   74 0F           			MOV	A,#0FH			;PC7 SET START\ALE
+9024   F0              			MOVX	@DPTR,A
+                       	
+9025   7B 30           			MOV	R3,#30H			;30MSEC
+9027   7C FF           	LOP:		MOV	R4,#FFH
+9029   00              	LOP1:		NOP
+902A   00              			nop
+902B   DC FC           			DJNZ	R4,LOP1
+902D   DB F8           			DJNZ	R3,LOP
+                       	
+g 29 2005 14:17                                                                                                  Page    2
+
+
+
+
+902F   74 0E           			MOV	A,#0EH			;PC7 RESET
+9031   F0              			MOVX	@DPTR,A
+9032   00              			NOP
+9033   00              			NOP
+                       	
+9034   90 20 43        			MOV	DPTR,#CONTROL
+9037   74 0C           			MOV	A,#0CH			;RESET PC6 TO READ EOC
+9039   F0              			MOVX	@DPTR,A
+                       	
+903A   90 20 40        	AD2:		MOV	DPTR,#PORTA
+903D   E0              			MOVX	A,@DPTR			;LO TO HI
+903E   54 80           			ANL	A,#80H
+9040   30 E7 F7        			JNB	ACC.7,AD2
+                       	
+9043   74 0D           			MOV	A,#0DH			;SET PC6 (OE)
+9045   90 20 43        			MOV	DPTR,#CONTROL
+9048   F0              			MOVX	@DPTR,A
+                       	
+9049   90 20 40        			MOV	DPTR,#PORTA		;READ DIGITAL	VALUE
+904C   E0              			MOVX	A,@DPTR
+904D   FE              			MOV	R6,A
+904E   12 67 7D        			LCALL	UPDD
+                       	
+9051   80 B3           	                SJMP    GET_NEXT                     ;LOOP BACK
+                       	
+9053                   			END
+
+
+
+           Lines Assembled :  73             Assembly Errors :  0
+
+
+

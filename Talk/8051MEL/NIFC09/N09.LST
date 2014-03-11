@@ -1,0 +1,356 @@
+g  4 2004 15:02                                                                                                  Page    1
+
+
+
+
+
+
+
+                 8051 Macro Assembler                  
+       ------------------------------------------------
+
+               Input  Filename : N09.asm
+               Output Filename : N09.obj
+
+
+                       	;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                       	;      PROGRAM FOR KEYBOARD DISPLAY   
+                       	;+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                       	
+                       	
+       2043            	CNTRL           EQU     2043H                ;CONTROL PORT ADDRESS OF  8255
+       2040            	PORTA           EQU     2040H                ;PORTA ADDRESS OF 8255 
+       2041            	PORTB           EQU     2041H                ;PORTB ADDRESS OF 8255
+       2042            	PORTC           EQU     2042H                ;PORTC ADDRESS OF 8255
+                       	
+       B000            	KEY_CD          EQU     B000H
+0000                   	                                    
+9000                   	        ORG     9000H
+                       	
+9000   74 90           	        MOV A,#90H
+9002   90 20 43        	        MOV DPTR,#CNTRL
+9005   F0              	        MOVX @DPTR,A
+                       	
+9006   75 F0 20        	BLNK:   MOV     B,#20H             ;Blank all digits
+9009   90 20 41        	BLNK1:	MOV	DPTR,#PORTB
+900C   74 FF           		MOV	A,#FFH
+900E   F0              		MOVX	@DPTR,A
+                       	
+900F   90 20 42        		MOV	DPTR,#PORTC
+9012   74 00           		MOV	A,#00H         	  ;Clock the shift register
+9014   F0              		MOVX	@DPTR,A
+                       	
+9015   74 F0           		MOV	A,#F0H
+9017   F0              		MOVX	@DPTR,A
+                       	
+9018   D5 F0 EE        		DJNZ	B,BLNK1
+                       	
+901B   74 00           	        MOV A,#00H
+901D   90 B0 00        	        MOV DPTR,#KEY_CD
+9020   F0              	        MOVX @DPTR,A             ;CLEAR THE KEY CODE LOCATION
+                       	
+9021   12 90 2F        	START:  LCALL SCAN                ;SCAN THE KEYBOARD & GET THE
+                       	
+9024   F8              	        MOV R0,A
+                       	
+9025   E4              	        CLR A                  ;Clear accumulator
+9026                   				
+9026   90 B0 00        	        MOV DPTR,#KEY_CD
+9029   E0              	        MOVX A,@DPTR            ;clear last key flag
+                       	
+902A   12 90 95        	        CALL DISP               ;display it
+                       	
+g  4 2004 15:02                                                                                                  Page    2
+
+
+
+
+902D   80 F2           	        SJMP START               ;DISPLAY IT
+                       	
+                       	SCAN:                                 ;KEYBOARD ROUTINE
+902F   7D 00           	        MOV R5,#00H                              ;OUTPUT:-KEY CODE IN ACC
+9031   74 07           	        MOV A,#07H               ;ENABLE A
+9033   90 20 42        	        MOV DPTR,#PORTC
+9036   F0              	        MOVX @DPTR,A
+                       	
+9037                   	BK:
+9037   90 20 40        	        MOV DPTR,#PORTA
+903A   E0              	        MOVX A,@DPTR
+                       	
+903B   B4 00 02        	        CJNE A,#00H,L1
+903E   80 F7           	        SJMP BK
+9040                   	L1:
+9040   12 90 8C        	        LCALL DELAY               ;DEBOUNCE
+                       	
+9043   90 20 40        	        MOV DPTR,#PORTA
+9046   E0              	        MOVX A,@DPTR
+                       	
+9047   B4 00 02        	        CJNE A,#00H,L2
+904A   80 EB           	        SJMP BK
+904C                   	L2:
+904C   7D 00           	        MOV R5,#00H
+904E   74 01           	        MOV A,#01H               ;ENABLE 1 ROW
+9050   FF              	        MOV R7,A
+9051   7E 00           	        MOV R6,#00H
+                       	
+9053                   	REV:
+9053   90 20 42        	        MOV DPTR,#PORTC
+9056   F0              	        MOVX @DPTR,A
+9057                   	        
+9057   90 20 40        	        MOV DPTR,#PORTA
+905A   E0              	        MOVX A,@DPTR
+                       	
+905B   B4 00 02        	        CJNE A,#00H,L3
+905E   80 02           	        SJMP L4                ;YES-FIND THE KEY
+9060                   	L3:
+9060   80 0E           	        SJMP NEXT
+9062                   	L4:
+9062   EE              	        MOV A,R6                 ;IF NO-CHECK NEXT ROW
+9063   24 08           	        ADD A,#08H
+                       	
+9065   FE              	        MOV R6,A
+9066   EF              	        MOV A,R7
+9067   23              	        RL A
+9068   FF              	        MOV R7,A
+9069   B4 08 02        	        CJNE A,#08H,L5
+906C   80 C1           	        SJMP SCAN
+906E                   	L5:
+906E   80 E3           	        SJMP REV
+                       	
+9070   C3              	NEXT:   CLR C
+9071   13              	        RRC A
+9072   40 03           	        JC  FND
+9074   0D              	        INC R5
+9075   80 F9           	        SJMP NEXT
+g  4 2004 15:02                                                                                                  Page    3
+
+
+
+
+                       	
+9077                   	FND:
+9077   EF              	        MOV A,R7
+9078   B4 01 03        	        CJNE A,#01H,L6
+907B   ED              	        MOV A,R5
+907C   80 0D           	        SJMP L7
+907E                   	L6:
+907E   B4 02 06        	        CJNE A,#02H,L8
+9081   ED              	        MOV A,R5                 ;GET THE KEY CODE IN ACC
+9082   24 08           	        ADD A,#08H
+9084   FD              	        MOV R5,A
+9085   80 04           	        SJMP L7
+9087                   	L8:
+9087   ED              	        MOV A,R5
+9088   24 10           	        ADD A,#10H
+908A   FD              	        MOV R5,A
+908B                   	L7:
+908B   22              	        RET  
+                       	
+908C                   	DELAY:
+908C   7A FF           	        MOV R2,#0FFH
+908E   79 FF           	L9:     MOV R1,#0FFH
+9090   D9 FE           	L10:    DJNZ R1,L10
+9092   DA FA           	        DJNZ R2,L9
+9094   22              	        RET
+                       	
+                       	;Display routine - displays the code & set the key flag
+                       	;Input key code in reg R0
+                       	
+9095   E8              	DISP:	MOV	A,R0			
+9096   90 B0 00        		MOV	DPTR,#KEY_CD
+9099   F0              		MOVX	@DPTR,A
+909A   90 A0 00        		MOV	DPTR,#DISP_LOOKUP_TBL   ;lookup table for		
+                       					        ;display
+909D   33              		RLC	A			;multiply by 4
+909E   33              		RLC	A
+909F   25 82           		ADD	A,DPL
+90A1   F5 82           		MOV	DPL,A
+90A3   50 05           		JNC	DISP0
+90A5   E5 83           		MOV	A,DPH
+90A7   04              		INC	A
+90A8   F5 83           		MOV	DPH,A
+                       	
+90AA   75 F0 04        	DISP0:	MOV	B,#04H			  ;number of digits
+90AD   7C 08           	DISP1:	MOV	R4,#08H		          ;no. of segments per digit
+90AF   E0              		MOVX	A,@DPTR		          ;get code for display
+90B0   C0 83           		PUSH	DPH
+90B2   C0 82           		PUSH	DPL		
+                       	
+90B4   90 20 41        	DISP2:	MOV	DPTR,#PORTB
+90B7   F0              		MOVX	@DPTR,A		          ;send data serially
+90B8   C0 E0           		PUSH	A
+90BA   74 00           		MOV	A,#00H		        ;clock the shift register
+90BC   90 20 42        		MOV	DPTR,#PORTC
+90BF   F0              		MOVX	@DPTR,A
+90C0   74 F0           		MOV	A,#F0H
+90C2   F0              		MOVX	@DPTR,A
+g  4 2004 15:02                                                                                                  Page    4
+
+
+
+
+                       	
+90C3   DC 02           		DJNZ	R4,$2		       ;is it the last segment
+90C5   80 06           		SJMP	DISP3		       ;yes,go to the next digit
+                       	
+90C7   D0 E0           	$2:	POP	A		            ;retrieve bit pattern
+90C9   13              		RRC	A		            ;next segment
+90CA   02 90 B4        		LJMP	DISP2
+                       	
+90CD   D0 E0           	DISP3:	POP	A
+90CF   D5 F0 02        		DJNZ	B,$3		           ;all digits over ?
+90D2   80 08           		SJMP	DONE		           ;yes, sense next key
+                       	
+90D4   D0 82           	$3:	POP	DPL		           ;NO,next digit
+90D6   D0 83           		POP	DPH
+90D8   A3              		INC	DPTR
+90D9   02 90 AD        		LJMP	DISP1
+90DC                   				
+90DC   D0 82           	DONE:	POP	DPL
+90DE   D0 83           		POP	DPH
+90E0   90 B0 00        		MOV	DPTR,#KEY_CD	      ;set key flag
+90E3   E0              		MOVX	A,@DPTR
+90E4                   		
+                       	;        CALL    CHK_FLG
+90E4   74 FF           		MOV	A,#FFH
+90E6   F0              		MOVX	@DPTR,A
+90E7   22              		RET
+                       	
+A000                   	        ORG A000H
+A000                   	DISP_LOOKUP_TBL:	
+A000   03              				DB	03H		;CODE FOR 0
+A001   03              				DB	03H		;0
+A002   FF              				DB	FFH		;BLANK
+A003   FF              				DB	FFH		;BLANK
+A004   9F              				DB	9FH		;1
+A005   03              				DB	03H		;0
+A006   FF              				DB	FFH		;BLANK
+A007   FF              				DB	FFH		;BLANK
+A008   25              				DB	25H		;2
+A009   03              				DB	03H		;0
+A00A   FF              				DB	FFH		;BLANK
+A00B   FF              				DB	FFH		;BLANK
+A00C   0D              				DB	0DH		;3
+A00D   03              				DB	03H		;0
+A00E   FF              				DB	FFH		;BLANK
+A00F   FF              				DB	FFH		;BLANK
+A010   99              				DB	99H		;4
+A011   03              				DB	03H		;0
+A012   FF              				DB	FFH		;BLANK
+A013   FF              				DB	FFH		;BLANK
+A014   49              				DB	49H		;5
+A015   03              				DB	03H		;0
+A016   FF              				DB	FFH		;BLANK
+A017   FF              				DB	FFH		;BLANK
+A018   41              				DB	41H		;6
+A019   03              				DB	03H		;0
+A01A   FF              				DB	FFH		;BLANK
+A01B   FF              				DB	FFH		;BLANK
+g  4 2004 15:02                                                                                                  Page    5
+
+
+
+
+A01C   1F              				DB	1FH		;7
+A01D   03              				DB	03H		;0
+A01E   FF              				DB	FFH		;BLANK
+A01F   FF              				DB	FFH		;BLANK
+A020   01              				DB	01H		;8
+A021   03              				DB	03H		;0
+A022   FF              				DB	FFH		;BLANK
+A023   FF              				DB	FFH		;BLANK
+A024   09              				DB	09H		;9
+A025   03              				DB	03H		;0
+A026   FF              				DB	FFH		;BLANK
+A027   FF              				DB	FFH		;BLANK
+A028   11              				DB	11H		;A
+A029   03              				DB	03H		;0
+A02A   FF              				DB	FFH		;BLANK
+A02B   FF              				DB	FFH		;BLANK
+A02C   C1              				DB	C1H		;B
+A02D   03              				DB	03H		;0
+A02E   FF              				DB	FFH		;BLANK
+A02F   FF              				DB	FFH		;BLANK
+A030   63              				DB	63H		;C
+A031   03              				DB	03H		;0
+A032   FF              				DB	FFH		;BLANK
+A033   FF              				DB	FFH		;BLANK
+A034   85              				DB	85H		;D
+A035   03              				DB	03H		;0
+A036   FF              				DB	FFH		;BLANK
+A037   FF              				DB	FFH		;BLANK
+A038   61              				DB	61H		;E
+A039   03              				DB	03H		;0
+A03A   FF              				DB	FFH		;BLANK
+A03B   FF              				DB	FFH		;BLANK
+A03C   71              				DB	71H		;F
+A03D   03              				DB	03H		;0
+A03E   FF              				DB	FFH		;BLANK
+A03F   FF              				DB	FFH		;BLANK
+A040   03              				DB	03H		;0
+A041   9F              				DB	9FH		;1
+A042   FF              				DB	FFH		;BLANK
+A043   FF              				DB	FFH		;BLANK
+A044   9F              				DB	9FH		;1
+A045   9F              				DB	9FH		;1
+A046   FF              				DB	FFH		;BLANK
+A047   FF              				DB	FFH		;BLANK
+A048   25              				DB	25H		;2
+A049   9F              				DB	9FH		;1
+A04A   FF              				DB	FFH		;BLANK
+A04B   FF              				DB	FFH		;BLANK
+A04C   0D              				DB	0DH		;3
+A04D   9F              				DB	9FH		;1
+A04E   FF              				DB	FFH		;BLANK
+A04F   FF              				DB	FFH		;BLANK
+                       	
+A050                   	        END
+A050                   	        END
+  Wed Aug  4 2004 15:02                                                                                                  Page    6
+
+
+Defined            Symbol Name             Value                References
+
+   56    BK                                 9037           61     69
+   19    BLNK                               9006      
+   20    BLNK1                              9009           31
+  Pre    BSECT                              0000      
+    6    CNTRL                           =  2043           16
+  Pre    CODE                               A000           13    189
+  Pre    DATA                               0000      
+  124    DELAY                              908C           63
+  134    DISP                               9095           46
+  148    DISP0                              90AA          143
+  149    DISP1                              90AD          177
+  154    DISP2                              90B4          168
+  170    DISP3                              90CD          164
+  190    DISP_LOOKUP_TBL                    A000          137
+  179    DONE                               90DC          172
+  106    FND                                9077          102
+   11    KEY_CD                          =  B000           34     43    135    181
+   62    L1                                 9040           60
+  127    L10                                9090          127
+   70    L2                                 904C           68
+   85    L3                                 9060           83
+   87    L4                                 9062           84
+   97    L5                                 906E           95
+  111    L6                                 907E          108
+  121    L7                                 908B          110    116
+  117    L8                                 9087          112
+  126    L9                                 908E          128
+  100    NEXT                               9070           86    104
+    7    PORTA                           =  2040           57     65     80
+    8    PORTB                           =  2041           20    154
+    9    PORTC                           =  2042           24     53     77    158
+   76    REV                                9053           98
+  Pre    RSECT                              0000      
+   50    SCAN                               902F           37     96
+   37    START                              9021           48
+
+
+
+
+           Lines Assembled :  272             Assembly Errors :  0
+
+
+

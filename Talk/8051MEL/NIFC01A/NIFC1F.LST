@@ -1,0 +1,74 @@
+  Fri Aug  6 2004 09:58                                                                                                  Page    1
+
+
+
+
+
+
+
+                         8051 Macro Assembler                  
+               ------------------------------------------------
+
+                       Input  Filename : NIFC1F.asm
+                       Output Filename : NIFC1F.obj
+
+
+    1                          	
+    2                          	;WITH 51MR / 51ME LED VERSION
+    3                          	
+    4                          	;Test program for ALS-NIFC-01 two phase on Anti Clock wise       
+    5                          	
+    6   9000                   	         org 9000H
+    7                          	
+    8   9000   74 80           	        mov     a,#80h              ;8255 initialisation
+    9   9002   90 20 43        	        mov     dptr,#2043h         ;PC Cntrl address = 2043h    
+   10   9005   F0              		movx 	@dptr,a
+   11   9006                   	start:  
+   12   9006   74 09           	        mov     a,#09h              ;phases b and c switched ON
+   13   9008   90 20 42        	        mov     dptr,#2042h
+   14   900B   F0              		movx 	@dptr,a
+   15   900C   12 90 2C        	        lcall   delay
+   16   900F   74 03           	        mov     a,#03h              ;phases d and b switched ON
+   17   9011   90 20 42        	        mov     dptr,#2042h
+   18   9014   F0              		movx 	@dptr,a
+   19   9015   12 90 2C        	        lcall   delay
+   20   9018   74 06           	        mov     a,#06h              ;phases a and d switched ON
+   21   901A   90 20 42        	        mov     dptr,#2042h
+   22   901D   F0              		movx 	@dptr,a
+   23   901E   12 90 2C        	        lcall   delay
+   24   9021   74 0C           	        mov     a,#0ch              ;phases c and a switched ON
+   25   9023   90 20 42        	        mov     dptr,#2042h
+   26   9026   F0              		movx 	@dptr,a
+   27   9027   12 90 2C        	        lcall   delay
+   28   902A   80 DA           	        sjmp    start               ;repeat the above procedure
+   29                          	
+   30   902C                   	delay:
+   31   902C   78 F7           	        mov  r0,#f7h        ;delay subroutine    
+   32   902E   79 FF           	oloop:  mov  r1,#ffh 
+   33   9030   D9 FE           	iloop:  djnz r1,iloop
+   34   9032   D8 FA           		djnz r0,oloop
+   35   9034   22              	        ret
+   36                          	
+   37   9035                   	        end                                   
+   37   9035                   	        end                                   
+  Fri Aug  6 2004 09:58                                                                                                  Page    2
+
+
+Defined            Symbol Name             Value                References
+
+  Pre    BSECT                              0000      
+  Pre    CODE                               9000            6
+  Pre    DATA                               0000      
+  Pre    RSECT                              0000      
+   30    delay                              902C           15     19     23     27
+   33    iloop                              9030           33
+   32    oloop                              902E           34
+   11    start                              9006           28
+
+
+
+
+           Lines Assembled :  37             Assembly Errors :  0
+
+
+

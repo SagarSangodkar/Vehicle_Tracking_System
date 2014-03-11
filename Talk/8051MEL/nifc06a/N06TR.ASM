@@ -1,0 +1,51 @@
+;NIFC-06
+;DUAL DAC AND OPTO I/O INTERFACE.
+
+
+PORTCP                  EQU     2043H   ;8255 control port
+					;address
+PORTA                   EQU     2040H   ;port A address
+PORTB                   EQU     2041H   ;port B address
+PORTC                   EQU     2042H   ;port C address
+
+;********TRIANGULAR  WAVE GENEATION*********
+
+        ORG 9000H
+
+	MOV DPTR,#PORTCP
+	MOV A,#80H
+	MOVX @DPTR,A
+
+RESTART:
+	MOV A,#00H
+  	MOV R1,#FFH
+LOOPT3:
+	NOP
+RISE:
+	LCALL OUTPUT
+	INC A
+	CJNE A,#FFH,RELOOP1
+	SJMP FALL
+RELOOP1:
+	DJNZ R1,LOOPT3
+	MOV R6,#FFH
+LOOPT6:	
+	NOP
+FALL:	
+	LCALL OUTPUT
+FORLOOP:
+	DEC A
+	CJNE A,#00H,RELOOP2
+	LJMP RISE
+RELOOP2: 
+        DJNZ R6,LOOPT6
+	LJMP RESTART
+				
+OUTPUT:	
+	MOV DPTR,#PORTA
+	MOVX @DPTR,A
+	MOV DPTR,#PORTB
+	MOVX @DPTR,A
+	RET		
+        
+        END

@@ -1,0 +1,117 @@
+g 29 2005 13:59                                                                                                  Page    1
+
+
+
+
+
+
+
+                 8051 Macro Assembler                  
+       ------------------------------------------------
+
+               Input  Filename : E:N07B.asm
+               Output Filename : E:N07B.obj
+
+
+                       	;WITH 51MR / 51ME LED VERSION
+                       	
+                       	;TEST PROGRAM FOR ALS-NIFC-07A - INTERRUPT MODE
+                       	;This program can be entered in the RAM location
+                       	;9500H and execute using GO command.
+                       	
+                       		;********************************************
+                       		;PROGRAM TO STUDY ADC-0809 IN INTERRUPT MODE
+                       		;********************************************
+                       	
+       2043            	CONTROL EQU     2043H                   ;control port address for 8255
+       2040            	PORTA   EQU     2040H                   ;porta address for 8255
+       2041            	PORTB   EQU     2041H                   ;portb address for 8255
+       2042            	PORTC   EQU     2042H                   ;portb address for 8255
+       677D            	UPDD    EQU     677DH                   ;display routine addr in data field
+       0045            	DUMY	EQU	45H
+       0047            	TEMP2	EQU	47H
+                       	
+                       	                ;INTERRUPT SERVICE ROUTINE
+                       	
+8010                   			ORG	8010H		;INT1 JUMP ADDR TO RAM
+8010   02 86 00        	                LJMP    8600H
+                       	
+8600                   	                ORG     8600H
+                       	
+8600   C2 AF           			CLR	EA		;DISABLE GLOBAL
+                       	
+8602                   			
+8602   90 20 43        			MOV	DPTR,#CONTROL
+8605   74 0D           			MOV	A,#0DH		;SET  PC6
+8607   F0              			MOVX	@DPTR,A
+                       	
+8608   90 20 40        			MOV	DPTR,#PORTA	;READ DIGITAL	VALUE
+860B   E0              			MOVX	A,@DPTR
+860C   FE              			MOV	R6,A
+860D   12 67 7D        			LCALL	UPDD		;DISPLAY IT	
+                       	
+8610   75 47 00        			MOV	TEMP2,#00H	;CLEAR FLAG
+8613   D2 AF           	                SETB	EA		;AGAIN SET GLOBAL
+                       	
+8615   32              			RETI
+                       	
+9000                   	                ORG     9000H
+                       	
+9000   74 90           			MOV	A,#90H
+9002   90 20 43        			MOV	DPTR,#CONTROL	;PORT a I/P,  PORT b,c O/P
+9005   F0              			MOVX	@DPTR,A
+g 29 2005 13:59                                                                                                  Page    2
+
+
+
+
+                       	
+9006   D2 8A           			SETB	IT1		;SPECIFYING FALLING EDGE
+                       						;TRIGGERED EXTERNAL INT1
+9008   D2 AA           			SETB	EX1		;ENABLES INT1
+900A   D2 AF           			SETB	EA		;ENABLE GLOBAL
+900C                   	AD00:
+900C   75 45 00        	                MOV DUMY,#00H
+900F   90 F0 00        	                MOV DPTR,#F000H
+9012   E0              	                MOVX A,@DPTR
+9013   F5 45           	                MOV     DUMY,A        ;CHANNEL NUM
+9015   00              			NOP
+9016   00              			NOP
+                       	
+9017   75 47 FF        	                MOV     TEMP2,#FFH      ;TEMP2 CONTAINS FLAG 
+                       						;00 IN ISR,FF IN MAIN LOOP
+901A   E5 45           			MOV     A,DUMY
+901C   54 0F           			ANL A,#0FH
+                       	
+901E   90 20 42        			MOV	DPTR,#PORTC	;OUT PUT CH NO
+9021   F0              			MOVX	@DPTR,A
+                       	
+9022   90 20 43        			MOV	DPTR,#CONTROL
+9025   74 0F           			MOV	A,#0FH		;PC7 SET START\ALE
+9027   F0              			MOVX	@DPTR,A
+                       	
+9028   7B 30           			MOV	R3,#30H		;30MSEC DEL
+902A   7C FA           	LOP:		MOV	R4,#FAH
+902C   00              	LOP1:		NOP
+902D   00              			NOP
+902E   DC FC           			DJNZ	R4,LOP1
+9030   DB F8           			DJNZ	R3,LOP
+                       	
+9032   74 0E           			MOV	A,#0EH		;PC7 RESET
+9034   F0              			MOVX	@DPTR,A
+9035   00              			NOP
+9036   00              			NOP
+                       	
+9037   E5 47           	AD05:		MOV	A,TEMP2		;WAIT HERE FOR
+9039   20 E7 FB        			JB	ACC.7,AD05	;TEMP2 FLAG CLEAR IN ISR
+                       	
+903C   80 CE           	                SJMP	AD00
+                       	
+903E                   			END
+
+
+
+           Lines Assembled :  90             Assembly Errors :  0
+
+
+

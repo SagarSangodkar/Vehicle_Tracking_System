@@ -1,0 +1,65 @@
+{
+
+var google_ads = new Array();
+var google_ad;
+var google_radlinks = new Array();
+var google_radlink;
+var google_info = new Object();
+google_ad = {}; 
+google_ad.n = 1; 
+google_ad.type = "text"; 
+google_ad.bidtype = "CPC"; 
+google_ad.targeting_type = "contextual"; 
+google_ad.url = "http://www.googleadservices.com/pagead/aclk?sa=L&amp;ai=CLH8qDtdEUZzuNM7bigeDrYCADYnK878C8b79lBnAjbcBEAEg4_GbAigEUO3FjvX______wFg5YKAgNQnoAHvsaD5A8gBAagDAaoEf0_QkhoF8hR1jjhgSjNTv0jQpv6Hpop9c1JTCw5hOX9qQm3jq0fpYG93aW-9cOR3A1PZL-q3eczO4qPnh66hMVT-MS7KOg6cDJ8Fi-IUcoaOVECXOGKneKyzpQ2UGrYU1NQ620Qed9WKjePP4uQY8iLw9y2jmb6HQqdCwbS_Og6IBgGAB_nN3wY&amp;num=1&amp;cid=5Gjxajs6U-WbsM1dlpUyLE7u&amp;sig=AOD64_2VlcJTOqLxJkBwCm_TOHL5UJpw5g&amp;client=ca-ehow_336x280&amp;adurl=http://www.inetlab.com/Products/Inetlab.SMPP.aspx"; 
+google_ad.visible_url = "www.inetlab.com"; 
+google_ad.line1 = "SMPP Client for .NET"; 
+google_ad.line2 = "Get C# / VB.NET Source Code"; 
+google_ad.line3 = "for Mobile Services"; 
+google_ad.regionname = ""; 
+google_ads[0] = google_ad; 
+google_ad = {}; 
+google_ad.n = 2; 
+google_ad.type = "text"; 
+google_ad.bidtype = "CPC"; 
+google_ad.targeting_type = "contextual"; 
+google_ad.url = "http://www.googleadservices.com/pagead/aclk?sa=L&amp;ai=CRxioDtdEUZzuNM7bigeDrYCADcajpp0D3v_Km07AjbcBEAIg4_GbAigEULGJjIgFYOWCgIDUJ6ABktGN4gPIAQGpAjWCl25y4FM-qAMBqgSDAU_QknnQ7A1PtorTR0hTvxGbq_mf_8dxcYXoADdhPDEgSGWMnl5Au1YndW-5OvF3W1PZdqG6ftSXr6_lxemmKXyWNS_OPQ6Va7MTgOhdLJiQCh2PID_5aL2ovAnOXKoN1Tjw2FLAVPyKjWwkCeroGSH5AuhWnr5B97Six3FaVwAvDzOgiAYBgAfWrvId&amp;num=2&amp;cid=5Gjxajs6U-WbsM1dlpUyLE7u&amp;sig=AOD64_217WxSCXLG64up4TFNl55UufMqOw&amp;client=ca-ehow_336x280&amp;adurl=http://dna2.mookie1.com/n/155493/155494/www.ideacellular.com/2rr6w1%3B11%3B4%3B%3B8%3B%3Bdgk4n3%3B%3B%3Bsk8st%3Bcak%3B1%3B/i/c%3F0%26pq%3D%252fwps%252fwcm%252fconnect%252fidea%252fidea3g%252f3g-sim-card%26247cr%3D20914626278%26247subproduct%3DCONTENT"; 
+google_ad.visible_url = "ideacellular.com/Dataplan"; 
+google_ad.line1 = "Idea 3G at Rs 10"; 
+google_ad.line2 = "Unlimited 3G for 20 Mins at Rs 10."; 
+google_ad.line3 = "Browse Internet at 21 Mbps!"; 
+google_ad.regionname = ""; 
+google_ads[1] = google_ad; 
+google_ad = {}; 
+google_ad.n = 3; 
+google_ad.type = "text"; 
+google_ad.bidtype = "CPC"; 
+google_ad.targeting_type = "contextual"; 
+google_ad.url = "http://www.googleadservices.com/pagead/aclk?sa=L&amp;ai=CdnC4DtdEUZzuNM7bigeDrYCADfnv6acC0bbjjTHAjbcBEAMg4_GbAigEUPP0y5T6_____wFg5YKAgNQnoAHj8p3_A8gBAagDAaoEfk_Q0mMH8hZ1jjhgSjNTv0jQpv6Hpop9c1JTCw5hOX9qQm3jq0fpYG93aW-9cOR3A1PZL-q3eczO4qPnh66hMVT-MS7KOg6cDJ8Fi-IUcoaOVECXOGKneKyzpQ2UGrYU1NQ620Qed9WKjePP4uQY8iLw9y2jmb6HQqdCwdDNkogGAYAHhY1i&amp;num=3&amp;cid=5Gjxajs6U-WbsM1dlpUyLE7u&amp;sig=AOD64_0pw9e5jYCBCG8FJ6uNdjTTKs_rbg&amp;client=ca-ehow_336x280&amp;adurl=http://www.roboform.com/php/land.php%3Faffid%3D13w03%26frm%3DD"; 
+google_ad.visible_url = "RoboForm.com/Password-Management"; 
+google_ad.line1 = "Download Password Manager"; 
+google_ad.line2 = "Never Forget Your Passwords Again."; 
+google_ad.line3 = "Over 50 Million Downloads To Date!"; 
+google_ad.regionname = ""; 
+google_ads[2] = google_ad; 
+google_ad = {}; 
+google_ad.n = 4; 
+google_ad.type = "text"; 
+google_ad.bidtype = "CPC"; 
+google_ad.targeting_type = "contextual"; 
+google_ad.url = "http://www.googleadservices.com/pagead/aclk?sa=L&amp;ai=Ce4PSDtdEUZzuNM7bigeDrYCADdzsl6gDlLee0kjAjbcBEAQg4_GbAigEUI_Eyj5g5YKAgNQnoAGY4u73A8gBAakCNYKXbnLgUz6oAwGqBIYBT9CSY-X6DUm2itNHSFO_EZur-Z__x3FxhegAN2E8MSBIZYyeXkC7Vid1b7k68XdbU9l2obp-1Jevr-XF6aYpfJY1L849DpVrsxOA6F0smJAKHY8gP_lovai8Cc5cqg3VOMDbrdX_SswR-s_iY-4ZIfEf6FtvvYcGt2QyMkq3RqEJgBY0ZhGIBgGAB9CdkQg&amp;num=4&amp;cid=5Gjxajs6U-WbsM1dlpUyLE7u&amp;sig=AOD64_29JPeJbHleCEzIRXL73yFgQgn1Zg&amp;client=ca-ehow_336x280&amp;adurl=http://www.jeevansathi.com/index.php%3Fsource%3Dc_general"; 
+google_ad.visible_url = "Jeevansathi.com/Register-Free!"; 
+google_ad.line1 = "Jeevansathi-Register Free"; 
+google_ad.line2 = "See Horoscope \x26amp; Astro Guna matches!"; 
+google_ad.line3 = "Create a Free Profile \x26amp; Search Now."; 
+google_ad.regionname = ""; 
+google_ads[3] = google_ad; 
+google_info.feedback_url = "http://www.google.com/url?ct\x3dabg\x26q\x3dhttps://www.google.com/adsense/support/bin/request.py%3Fcontact%3Dabg_afc%26url%3Dhttp://www.ehow.com/how_7326118_send-sms-php-script.html%26gl%3DIN%26hl%3Den%26client%3Dca-ehow_336x280%26hideleadgen%3D1%26ai0%3DCLH8qDtdEUZzuNM7bigeDrYCADYnK878C8b79lBnAjbcBEAEg4_GbAigEUO3FjvX______wFg5YKAgNQnoAHvsaD5A8gBAagDAaoEf0_QkhoF8hR1jjhgSjNTv0jQpv6Hpop9c1JTCw5hOX9qQm3jq0fpYG93aW-9cOR3A1PZL-q3eczO4qPnh66hMVT-MS7KOg6cDJ8Fi-IUcoaOVECXOGKneKyzpQ2UGrYU1NQ620Qed9WKjePP4uQY8iLw9y2jmb6HQqdCwbS_Og6IBgGAB_nN3wY%26ai1%3DCRxioDtdEUZzuNM7bigeDrYCADcajpp0D3v_Km07AjbcBEAIg4_GbAigEULGJjIgFYOWCgIDUJ6ABktGN4gPIAQGpAjWCl25y4FM-qAMBqgSDAU_QknnQ7A1PtorTR0hTvxGbq_mf_8dxcYXoADdhPDEgSGWMnl5Au1YndW-5OvF3W1PZdqG6ftSXr6_lxemmKXyWNS_OPQ6Va7MTgOhdLJiQCh2PID_5aL2ovAnOXKoN1Tjw2FLAVPyKjWwkCeroGSH5AuhWnr5B97Six3FaVwAvDzOgiAYBgAfWrvId%26ai2%3DCdnC4DtdEUZzuNM7bigeDrYCADfnv6acC0bbjjTHAjbcBEAMg4_GbAigEUPP0y5T6_____wFg5YKAgNQnoAHj8p3_A8gBAagDAaoEfk_Q0mMH8hZ1jjhgSjNTv0jQpv6Hpop9c1JTCw5hOX9qQm3jq0fpYG93aW-9cOR3A1PZL-q3eczO4qPnh66hMVT-MS7KOg6cDJ8Fi-IUcoaOVECXOGKneKyzpQ2UGrYU1NQ620Qed9WKjePP4uQY8iLw9y2jmb6HQqdCwdDNkogGAYAHhY1i%26ai3%3DCe4PSDtdEUZzuNM7bigeDrYCADdzsl6gDlLee0kjAjbcBEAQg4_GbAigEUI_Eyj5g5YKAgNQnoAGY4u73A8gBAakCNYKXbnLgUz6oAwGqBIYBT9CSY-X6DUm2itNHSFO_EZur-Z__x3FxhegAN2E8MSBIZYyeXkC7Vid1b7k68XdbU9l2obp-1Jevr-XF6aYpfJY1L849DpVrsxOA6F0smJAKHY8gP_lovai8Cc5cqg3VOMDbrdX_SswR-s_iY-4ZIfEf6FtvvYcGt2QyMkq3RqEJgBY0ZhGIBgGAB9CdkQg\x26usg\x3dAFQjCNEXvBW9zHGJgbCvcoW6G4rNa1nz7g";
+var google_attribution_text = "AdChoices";
+var google_is_rtl = false;
+if (window.google_ad_request_done) {
+google_ad_request_done(google_ads);
+}
+if (window.google_radlink_request_done) {
+google_radlink_request_done(google_radlinks);
+}
+}
